@@ -2,8 +2,8 @@ name: Auto Commit
 
 on:
   schedule:
-    - cron: "0 7 * * *" # Jam 14:00 WIB
-  workflow_dispatch: # Bisa dijalankan manual
+    - cron: "0 7 * * *" # 14:00 WIB
+  workflow_dispatch:
 
 jobs:
   auto-commit:
@@ -12,11 +12,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }} # pakai token manual
 
       - name: Setup Git
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "yanrzz-bot"
+          git config --global user.email "yanrzz-bot@users.noreply.github.com"
 
       - name: Make Changes
         run: |
@@ -29,6 +31,4 @@ jobs:
 
       - name: Push Changes
         run: |
-          git push origin HEAD
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git push https://x-access-token:${{ secrets.PERSONAL_TOKEN }}@github.com/yanrzz/github.git HEAD:main
