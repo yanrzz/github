@@ -1,0 +1,39 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: "0 7 * * *"  # Jalan setiap hari jam 07:00 UTC (14:00 WIB)
+  workflow_dispatch:      # Bisa dijalankan manual dari GitHub Actions tab
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Setup Git Identity
+      - name: Setup Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      # 3. Buat Perubahan
+      - name: Make Changes
+        run: |
+          echo "Auto update on $(date)" >> changes.txt
+
+      # 4. Commit Perubahan
+      - name: Commit Changes
+        run: |
+          git add .
+          git commit -m "Auto commit from GitHub Actions" || echo "No changes to commit"
+
+      # 5. Push Perubahan
+      - name: Push Changes
+        run: |
+          git push origin HEAD
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
